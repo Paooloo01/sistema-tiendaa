@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventario Tienda</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>📦 Inventario de la Tienda</h1>
+        <div>
+            <a href="/nuevo" class="btn btn-primary btn-lg me-2">+ Nuevo Producto</a>
+            <a href="/vender" class="btn btn-success btn-lg me-2">🛒 Ir a Caja</a>
+            <a href="/reportes" class="btn btn-warning btn-lg text-dark">📈 Ver Ganancias</a>
+        </div>
+    </div>
+
+    <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <strong>⚠️ No se pudo eliminar el producto.</strong>
+        <br>
+        El sistema lo protegió porque:
+        <ul>
+            <li>Ya tiene <b>ventas registradas</b> en el historial.</li>
+            <li>O es un <b>ingrediente</b> necesario para un Arreglo.</li>
+        </ul>
+        <i>Consejo: Si ya no lo vendes, mejor edítalo y ponle Stock 0 o cámbiale el nombre a "DESCONTINUADO".</i>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${param.exito}" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        ✅ <strong>¡Listo!</strong> El producto ha sido eliminado correctamente.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                <tr>
+                    <th>Código</th>
+                    <th>Producto</th>
+                    <th>Tipo</th>
+                    <th>Precio Venta</th>
+                    <th>Stock Actual</th>
+                    <th style="width: 280px;">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="prod : ${misProductos}">
+
+                    <td th:text="${prod.codigo}" class="fw-bold text-muted">COD</td>
+
+                    <td th:text="${prod.nombre}" class="fw-bold">Nombre</td>
+
+                    <td>
+                        <span th:if="${prod.esArreglo}" class="badge bg-primary">Arreglo</span>
+                        <span th:unless="${prod.esArreglo}" class="badge bg-secondary">Insumo</span>
+                    </td>
+
+                    <td th:text="'S/ ' + ${prod.precioVenta}">S/ 0.00</td>
+
+                    <td>
+                        <span th:if="${prod.stock == 0}" class="badge bg-danger">Agotado</span>
+                        <span th:if="${prod.stock > 0 && prod.stock < 5}" class="text-danger fw-bold">
+                                ⚠️ <span th:text="${prod.stock}">2</span>
+                            </span>
+                        <span th:if="${prod.stock >= 5}" th:text="${prod.stock}">10</span>
+                    </td>
+
+                    <td>
+                        <a th:if="${prod.esArreglo}"
+                           th:href="@{/receta/{id}(id=${prod.id})}"
+                           class="btn btn-sm btn-info text-white me-1" title="Ver receta">
+                            📜 Ingredientes
+                        </a>
+
+                        <a th:href="@{/editar/{id}(id=${prod.id})}" class="btn btn-sm btn-warning me-1">
+                            ✏️ Editar
+                        </a>
+
+                        <a th:href="@{/eliminar/{id}(id=${prod.id})}"
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('¿Estás seguro?\n\nSi el producto tiene ventas, NO se borrará.');">
+                            🗑️
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div th:if="${misProductos.empty}" class="alert alert-info text-center mt-3">
+                📭 No hay productos registrados. ¡Crea el primero!
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

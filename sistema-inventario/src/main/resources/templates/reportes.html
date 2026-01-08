@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte Financiero Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>📊 Dashboard Financiero</h2>
+        <a href="/mi-tienda" class="btn btn-outline-secondary">⬅ Volver al Menú</a>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body p-2 d-flex justify-content-center bg-white rounded">
+            <div class="btn-group" role="group">
+                <a href="/reportes?periodo=hoy"
+                   class="btn"
+                   th:classappend="${periodoActual == 'hoy'} ? 'btn-primary' : 'btn-outline-primary'">📅 Hoy</a>
+
+                <a href="/reportes?periodo=semana"
+                   class="btn"
+                   th:classappend="${periodoActual == 'semana'} ? 'btn-primary' : 'btn-outline-primary'">📅 Esta Semana</a>
+
+                <a href="/reportes?periodo=mes"
+                   class="btn"
+                   th:classappend="${periodoActual == 'mes'} ? 'btn-primary' : 'btn-outline-primary'">📅 Este Mes</a>
+
+                <a href="/reportes?periodo=total"
+                   class="btn"
+                   th:classappend="${periodoActual == 'total'} ? 'btn-primary' : 'btn-outline-primary'">🌎 Histórico Total</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card text-white bg-primary shadow h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title opacity-75">Ventas Totales</h5>
+                    <h1 class="display-4 fw-bold" th:text="'S/ ' + ${totalVendido}">S/ 0.00</h1>
+                    <small>Ingreso Bruto</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card text-white bg-success shadow h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title opacity-75">Ganancia Neta</h5>
+                    <h1 class="display-4 fw-bold" th:text="'S/ ' + ${totalGanancia}">S/ 0.00</h1>
+                    <small>Dinero real para tu bolsillo</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-warning text-dark fw-bold">
+                    🏆 Top 5 Más Vendidos
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped mb-0">
+                        <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th class="text-center">Cant. Vendida</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="entry : ${topProductos}">
+                            <td th:text="${entry.key}">Oso Peluche</td>
+                            <td class="text-center fw-bold" th:text="${entry.value}">15</td>
+                        </tr>
+                        <tr th:if="${topProductos.empty}">
+                            <td colspan="2" class="text-center text-muted">Sin datos en este periodo</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-dark text-white">
+                    📜 Historial de Tickets
+                </div>
+                <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light sticky-top">
+                        <tr>
+                            <th>#</th>
+                            <th>Fecha</th>
+                            <th>Total</th>
+                            <th>Ganancia</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="v : ${listaVentas}">
+                            <td th:text="${v.id}">1</td>
+                            <td th:text="${#temporals.format(v.fecha, 'dd/MM HH:mm')}">01/01 12:00</td>
+                            <td th:text="'S/ ' + ${v.totalVenta}">S/ 100</td>
+                            <td th:text="'S/ ' + ${v.gananciaTotal}" class="text-success fw-bold">S/ 40</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

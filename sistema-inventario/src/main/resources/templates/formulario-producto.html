@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Producto</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="card shadow col-md-6 offset-md-3">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title" th:text="${producto.id == null} ? 'Nuevo Producto' : 'Editar Producto'">Datos del Producto</h3>
+        </div>
+        <div class="card-body">
+
+            <form th:action="@{/guardar}" th:object="${producto}" method="post">
+                <input type="hidden" th:field="*{id}">
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombre del Producto:</label>
+                    <input type="text" th:field="*{nombre}" class="form-control" placeholder="Ej: Oso de Peluche" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Código:</label>
+                    <input type="text" th:field="*{codigo}" class="form-control" placeholder="Ej: PEL-001" required>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Costo de Compra:</label>
+                        <div class="input-group">
+                            <span class="input-group-text">S/</span>
+                            <input type="number" step="0.01" id="inputCosto" th:field="*{precioCompra}" class="form-control">
+                        </div>
+                        <small id="avisoCosto" class="text-danger" style="display:none; font-size: 0.8em;">
+                            (Calculado por receta)
+                        </small>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Precio de Venta:</label>
+                        <div class="input-group">
+                            <span class="input-group-text">S/</span>
+                            <input type="number" step="0.01" th:field="*{precioVenta}" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Stock Inicial:</label>
+                    <input type="number" th:field="*{stock}" class="form-control" required>
+                </div>
+
+                <hr>
+
+                <div class="form-check mb-3 p-3 border rounded bg-light">
+                    <input class="form-check-input" type="checkbox" id="checkEsArreglo"
+                           th:field="*{esArreglo}" onchange="toggleCosto()">
+
+                    <label class="form-check-label fw-bold" for="checkEsArreglo">
+                        ¿Es un Arreglo / Pack? 🎁
+                    </label>
+                    <small class="text-muted d-block mt-1">
+                        Si marcas esto, el costo será la suma de sus ingredientes y el stock dependerá de los insumos.
+                    </small>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-success btn-lg">💾 Guardar Producto</button>
+                    <a href="/mi-tienda" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Esta función se ejecuta cada vez que tocas el Checkbox
+    function toggleCosto() {
+        var esArreglo = document.getElementById("checkEsArreglo").checked;
+        var inputCosto = document.getElementById("inputCosto");
+        var aviso = document.getElementById("avisoCosto");
+
+        if (esArreglo) {
+            // SI ES ARREGLO: Bloqueamos el costo y ponemos 0
+            inputCosto.value = 0;
+            inputCosto.readOnly = true; // Hace que no se pueda escribir
+            inputCosto.style.backgroundColor = "#e9ecef"; // Color gris
+            aviso.style.display = "block"; // Muestra el texto rojo
+        } else {
+            // SI ES INSUMO: Permitimos escribir
+            inputCosto.readOnly = false;
+            inputCosto.style.backgroundColor = "white";
+            aviso.style.display = "none";
+        }
+    }
+
+    // Ejecutar al cargar la página por si estamos EDITANDO uno que ya es arreglo
+    window.onload = toggleCosto;
+</script>
+
+</body>
+</html>
